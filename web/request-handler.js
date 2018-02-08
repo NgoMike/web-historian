@@ -19,7 +19,10 @@ exports.handleRequest = function (request, response) {
       response.end(data);
     });
   } else if (request.method === 'GET') {
-    archive.isUrlArchived(request.url, (err, data) => {
+    if (request.url.charAt(0) === '/') {
+      request.url = request.url.slice(1);
+    }
+    archive.isUrlArchived(request.url, (err, data) => {      
       if (err) {
         throw err;
       }
@@ -27,13 +30,15 @@ exports.handleRequest = function (request, response) {
         response.statusCode = 404;
         response.end();
       } else {
-        fs.readFile(archive.paths.archivedSites, (err, data) => {
+        console.log('request ', request.url);
+        console.log('data ', data);
+        fs.readdir(archive.paths.archivedSites, (err, data) => {
           if (err) {
             throw err;
           }
           response.statusCode = 200;
           response.writeHead(200, {'Content-Type': 'application/json'});
-          response.end(data);
+          response.end(JSON.stringify(data));
         });
       }    
     });
@@ -49,11 +54,7 @@ exports.handleRequest = function (request, response) {
         response.writeHead(302, {'Content-Type': 'application/json'});
         response.end();
       });
-
-
     });
-    
-    
   } else {
     response.statusCode = 404;
     response.end();

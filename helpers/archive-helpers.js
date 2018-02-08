@@ -97,19 +97,21 @@ exports.isUrlArchived = function(url, callback) {
 };
 
 exports.downloadUrls = function(urls) {
-  // 
   for (var i = 0; i < urls.length; i++) {
     let url = urls[i];
     this.isUrlArchived(url, (err, data) => {
       if (err) {
         throw err;
       }
+      console.log(url, data);
+      // if file isn't archived yet
       if (data === false) {
-        fs.writeFile(exports.paths.archivedSites, url, (err) => {
+        // write new file - path, '/' one layer in, url inside file, cb for error
+        fs.writeFile(exports.paths.archivedSites + '/' + url, url, (err) => {
           if (err) {
             throw err;
           }
-          callback(err);
+          // callback(err);
         });
       }
     });
