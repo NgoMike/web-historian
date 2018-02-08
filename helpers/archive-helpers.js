@@ -34,7 +34,7 @@ exports.readListOfUrls = function(callback) {
       throw err;
     }
     // use template literal to convert hex code to a string, then split on '\n'
-    let urls = `${data}`.split('\n');
+    let urls = data.toString().split('\n');
     // invoke callback on err and urls
     callback(err, urls);
   });
@@ -49,7 +49,7 @@ exports.isUrlInList = function(url, callback) {
       throw err;
     }
     // use template literal to convert hex code to a string, then split on '\n'
-    let urls = `${data}`.split('\n');
+    let urls = data.toString().split('\n');
     // check if url is in urls array
     let bool = urls.includes(url);
     // invoke callback on err and boolean
@@ -88,8 +88,7 @@ exports.isUrlArchived = function(url, callback) {
       throw err;
     }
     // use template literal to convert hex code to a string, then split on '\n'
-    let urls = `${data}`;
-    console.log(urls);
+    let urls = data.toString();
     // check if url is in urls array
     let bool = urls.includes(url);
     // invoke callback on err and boolean
@@ -99,4 +98,20 @@ exports.isUrlArchived = function(url, callback) {
 
 exports.downloadUrls = function(urls) {
   // 
+  for (var i = 0; i < urls.length; i++) {
+    let url = urls[i];
+    this.isUrlArchived(url, (err, data) => {
+      if (err) {
+        throw err;
+      }
+      if (data === false) {
+        fs.writeFile(exports.paths.archivedSites, url, (err) => {
+          if (err) {
+            throw err;
+          }
+          callback(err);
+        });
+      }
+    });
+  }
 };
