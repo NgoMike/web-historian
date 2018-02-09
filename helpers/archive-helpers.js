@@ -94,12 +94,7 @@ exports.isUrlArchived = function(url, callback) {
     // use template literal to convert hex code to a string, then split on '\n'
     let urls = data.toString();
     // check if url is in urls array
-
-    console.log("URL", url);
-    console.log("URLS", urls);
-
     let bool = urls.includes(url);
-    console.log(bool);
     // invoke callback on err and boolean
     callback(err, bool);
   });
