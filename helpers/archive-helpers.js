@@ -68,7 +68,7 @@ exports.addUrlToList = function(url, callback) {
     // if url is not yet in list already
     if (data === false) {
       // add url to list
-      fs.writeFile(exports.paths.list, url, (err) => {
+      fs.appendFile(exports.paths.list, url + '\n', (err) => {
         // if error, throw error
         if (err) {
           throw err;
@@ -76,10 +76,14 @@ exports.addUrlToList = function(url, callback) {
         callback(err);
       }); 
     }
+    if (data === true) {
+      callback(err);
+    }
   });
 };
 
 exports.isUrlArchived = function(url, callback) {
+  
   // checking if url is archived
   fs.readdir(exports.paths.archivedSites, (err, data) => {
     // checking if there's an error
@@ -90,7 +94,12 @@ exports.isUrlArchived = function(url, callback) {
     // use template literal to convert hex code to a string, then split on '\n'
     let urls = data.toString();
     // check if url is in urls array
+
+    console.log("URL", url);
+    console.log("URLS", urls);
+
     let bool = urls.includes(url);
+    console.log(bool);
     // invoke callback on err and boolean
     callback(err, bool);
   });
@@ -103,7 +112,6 @@ exports.downloadUrls = function(urls) {
       if (err) {
         throw err;
       }
-      console.log(url, data);
       // if file isn't archived yet
       if (data === false) {
         // write new file - path, '/' one layer in, url inside file, cb for error

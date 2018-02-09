@@ -54,7 +54,7 @@ describe('server', function() {
 
     describe('POST', function () {
       it('should append submitted sites to \'sites.txt\'', function(done) {
-        var url = 'www.example.com';
+        var url = 'www.myspace.com';
 
         // Reset the test file and process request
         fs.closeSync(fs.openSync(archive.paths.list, 'w'));
@@ -72,7 +72,30 @@ describe('server', function() {
             done(err);
           });
       });
+
+      it('should return contents of loading.html if URL is not archived', function(done) {
+        request
+          .post('/')
+          .type('form')
+          .send({url: 'twitter.com'})
+          .expect(302, /Our robots/, done);
+      });
+
+      it('should return contents of the requested website archive if URL is archived', function(done) {
+        request
+          .post('/')
+          .type('form')
+          .send({url: 'www.example.com'})
+          .expect(302, /blah blah/, done);
+      });
+
+
+
+
+
     });
+
+    
   });
 });
 
